@@ -135,25 +135,25 @@
     - **Property 12: Upgrades increase difficulty discretely**
     - **Validates: Requirements 4.1**
 
-- [ ] 9. Implement base rendering system
-  - [ ] 9.1 Create Renderer with basic drawing
+- [-] 9. Implement base rendering system
+  - [x] 9.1 Create Renderer with basic drawing
     - Set up rendering context and coordinate system
     - Implement clear and frame methods
     - Apply haunted house color palette
     - _Requirements: 6.1, 6.2, 6.3_
   
-  - [ ] 9.2 Implement house rendering
+  - [x] 9.2 Implement house rendering
     - Draw base house structure
     - Create upgrade visual layer system
     - _Requirements: 9.4_
   
-  - [ ] 9.3 Implement family rendering
+  - [x] 9.3 Implement family rendering
     - Draw families with position and visual variation
     - Render words above families with typing progress
     - Add visual feedback for correct/incorrect input
     - _Requirements: 1.1, 1.2, 1.3, 2.5_
   
-  - [ ] 9.4 Implement UI rendering
+  - [x] 9.4 Implement UI rendering
     - Display health, fright points, wave number
     - Update upgrade menu display
     - _Requirements: 6.1, 6.2, 6.3, 3.2_

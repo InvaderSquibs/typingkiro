@@ -36,27 +36,46 @@ export class InputSystem {
       return;
     }
 
-    // If no current target, find one
-    if (!this.currentTarget || !families.find(f => f.id === this.currentTarget?.id)) {
-      this.selectNextTarget(families);
+    // If current target no longer exists, clear it
+    if (this.currentTarget && !families.find(f => f.id === this.currentTarget?.id)) {
+      this.currentTarget = null;
     }
 
-    // Validate input against current target
-    if (this.currentTarget) {
-      const expectedChar = this.currentTarget.word[this.currentTarget.typedIndex];
+    // If no current target, try to find a family that starts with this character
+    if (!this.currentTarget) {
+      const matchingFamily = families.find(f => 
+        f.typedIndex === 0 && f.word[0] === char
+      );
       
-      if (char === expectedChar) {
-        // Correct character
+      if (matchingFamily) {
+        // Lock onto this family
+        this.currentTarget = matchingFamily;
         this.currentTarget.typedIndex++;
         
-        // Check if word is complete
+        // Check if it's a one-letter word (unlikely but possible)
         if (this.currentTarget.typedIndex >= this.currentTarget.word.length) {
           this.entityManager.scareFamily(this.currentTarget.id, this.gameState);
-          this.selectNextTarget(families);
+          this.currentTarget = null;
         }
       }
-      // Incorrect character - do nothing (no penalty)
+      // If no match, ignore the input (user typed wrong first letter)
+      return;
     }
+
+    // We have a target - validate input against it
+    const expectedChar = this.currentTarget.word[this.currentTarget.typedIndex];
+    
+    if (char === expectedChar) {
+      // Correct character
+      this.currentTarget.typedIndex++;
+      
+      // Check if word is complete
+      if (this.currentTarget.typedIndex >= this.currentTarget.word.length) {
+        this.entityManager.scareFamily(this.currentTarget.id, this.gameState);
+        this.currentTarget = null; // Clear target so user can choose next one
+      }
+    }
+    // Incorrect character - do nothing (no penalty)
   }
 
   private selectNextTarget(families: Family[]): void {
@@ -65,7 +84,7 @@ export class InputSystem {
       return;
     }
 
-    // Find the family closest to the door
+    // Find the family closest to the door (highest X position)
     let closest = families[0];
     for (const family of families) {
       if (family.position.x > closest.position.x) {
@@ -74,6 +93,15 @@ export class InputSystem {
     }
 
     this.currentTarget = closest;
+  }
+
+  // Public method to manually select target (for future use)
+  selectTarget(familyId: string): void {
+    const families = this.entityManager.getActiveFamilies();
+    const family = families.find(f => f.id === familyId);
+    if (family) {
+      this.currentTarget = family;
+    }
   }
 
   getCurrentTarget(): Family | null {
